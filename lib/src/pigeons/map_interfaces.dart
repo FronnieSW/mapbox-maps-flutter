@@ -674,6 +674,18 @@ class CameraOptions {
     ];
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      "center": {
+        "latitude": (center?.coordinates.lat)?.toDouble(),
+        "longitude": (center?.coordinates.lng)?.toDouble(),
+      },
+      "zoom": zoom,
+      "bearing": bearing,
+      "pitch": pitch
+    };
+  }
+
   Object encode() {
     return _toList();
   }

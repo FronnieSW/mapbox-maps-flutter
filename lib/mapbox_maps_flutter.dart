@@ -89,3 +89,4 @@ part 'src/package_info.dart';
 part 'src/http/http_service.dart';
 part 'src/cancelable.dart';
 part 'src/deprecated.dart';
+part 'src/mock_location_controller.dart';
