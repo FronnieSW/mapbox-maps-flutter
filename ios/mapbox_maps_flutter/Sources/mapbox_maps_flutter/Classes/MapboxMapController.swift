@@ -16,6 +16,7 @@ final class MapboxMapController: NSObject, FlutterPlatformView {
     private let interactionsController: InteractionsController?
     private let eventHandler: MapboxEventHandler
     private let binaryMessenger: SuffixBinaryMessenger
+    private var mockLocationApi: MockLocationApiImpl?
 
     func view() -> UIView {
         return mapView
@@ -34,6 +35,7 @@ final class MapboxMapController: NSObject, FlutterPlatformView {
             .set(key: "com.mapbox.common.telemetry.internal.custom_user_agent_fragment", value: "FlutterPlugin/\(pluginVersion)")
 
         mapView = MapView(frame: frame, mapInitOptions: mapInitOptions)
+        mockLocationApi = MockLocationApiImpl(mapView: mapView, messenger: binaryMessenger.messenger)
         mapboxMap = mapView.mapboxMap
 
         channel = FlutterMethodChannel(
@@ -126,6 +128,7 @@ final class MapboxMapController: NSObject, FlutterPlatformView {
             interactionsController!.removeInteraction(methodCall: methodCall)
             result(nil)
         case "platform#releaseMethodChannels":
+            disposeMockLocationApi()
             releaseMethodChannels()
             result(nil)
         case "map#snapshot":
@@ -165,6 +168,10 @@ final class MapboxMapController: NSObject, FlutterPlatformView {
         default:
             result(FlutterMethodNotImplemented)
         }
+    }
+    private func disposeMockLocationApi() {
+        mockLocationApi?.dispose()
+        mockLocationApi = nil
     }
 
     private func releaseMethodChannels() {
