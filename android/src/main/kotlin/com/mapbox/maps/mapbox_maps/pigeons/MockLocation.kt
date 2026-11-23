@@ -41,7 +41,13 @@ class CustomLocationProvider : LocationProvider {
   fun updateLocation(lat: Double, lon: Double, bearing: Double?, durationMs: Long) {
     val point = Point.fromLngLat(lon, lat)
     if (bearing != null) {
-      consumer?.onBearingUpdated(bearing)
+      // Same duration + linear interpolation as the position animation, so the
+      // puck rotation (and the follow-puck camera bearing synced to it) moves
+      // in lockstep with the puck position instead of the default duration.
+      consumer?.onBearingUpdated(bearing) {
+        duration = durationMs
+        interpolator = LinearInterpolator()
+      }
     }
     consumer?.onLocationUpdated(point) {
       duration = durationMs

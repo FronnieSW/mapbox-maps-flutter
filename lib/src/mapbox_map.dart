@@ -684,6 +684,28 @@ class MapboxMap extends ChangeNotifier {
           MapAnimationOptions? mapAnimationOptions) =>
       _animationManager.flyTo(cameraOptions, mapAnimationOptions);
 
+  /// [NT] Imperatively transitions the map viewport to [state].
+  ///
+  /// Same native mechanism as the declarative [MapWidget.viewport], but usable
+  /// from outside the widget tree (e.g. a bloc holding the [MapboxMap]).
+  ///
+  /// - [FollowPuckViewportState]: the camera is updated natively every frame
+  ///   from the interpolated puck position, so puck and camera stay in sync.
+  ///   Use [DefaultViewportTransition] (default) for transitions into it.
+  /// - [IdleViewportState]: stops any viewport-driven camera updates.
+  ///
+  /// A user gesture (pan/pinch/rotate) moves the native viewport to idle
+  /// automatically.
+  ///
+  /// Returns `true` when the transition finished, `false` if it was
+  /// interrupted (another transition, user gesture, ...).
+  Future<bool> transitionToViewport(
+    ViewportState state, {
+    ViewportTransition? transition = const DefaultViewportTransition(),
+  }) =>
+      _viewportMessenger.transition(
+          state._toStorage(), transition?._toStorage());
+
   /// Pitch the map by with optional animation.
   Future<void> pitchBy(
           double pitch, MapAnimationOptions? mapAnimationOptions) =>
